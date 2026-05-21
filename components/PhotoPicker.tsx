@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { colors, radius, spacing } from '../lib/theme';
+import CropModal from './CropModal';
 
 interface Props {
   uri: string | null;
@@ -10,6 +12,8 @@ interface Props {
 }
 
 export default function PhotoPicker({ uri, onChange }: Props) {
+  const [pendingUri, setPendingUri] = useState<string | null>(null);
+
   const pickFromCamera = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
@@ -18,11 +22,10 @@ export default function PhotoPicker({ uri, onChange }: Props) {
     }
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
-      allowsEditing: true,
       quality: 0.8,
     });
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      setPendingUri(result.assets[0].uri);
     }
   };
 
@@ -35,11 +38,10 @@ export default function PhotoPicker({ uri, onChange }: Props) {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
-      allowsEditing: true,
       quality: 0.8,
     });
     if (!result.canceled) {
-      onChange(result.assets[0].uri);
+      setPendingUri(result.assets[0].uri);
     }
   };
 
@@ -61,16 +63,31 @@ export default function PhotoPicker({ uri, onChange }: Props) {
   };
 
   return (
-    <Pressable style={styles.container} onPress={openMenu}>
-      {uri ? (
-        <Image source={{ uri }} style={styles.image} contentFit="cover" />
-      ) : (
-        <View style={styles.placeholder}>
-          <Ionicons name="camera-outline" size={32} color={colors.textMuted} />
-          <Text style={styles.placeholderText}>Add a photo</Text>
-        </View>
-      )}
-    </Pressable>
+    <>
+      <Pressable style={styles.container} onPress={openMenu}>
+        {uri ? (
+          <Image source={{ uri }} style={styles.image} contentFit="cover" />
+        ) : (
+          <View style={styles.placeholder}>
+            <Ionicons
+              name="camera-outline"
+              size={32}
+              color={colors.textMuted}
+            />
+            <Text style={styles.placeholderText}>Add a photo</Text>
+          </View>
+        )}
+      </Pressable>
+
+      <CropModal
+        uri={pendingUri}
+        onDone={(cropped) => {
+          setPendingUri(null);
+          onChange(cropped);
+        }}
+        onCancel={() => setPendingUri(null)}
+      />
+    </>
   );
 }
 
