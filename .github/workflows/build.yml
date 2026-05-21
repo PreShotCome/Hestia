@@ -48,6 +48,14 @@ jobs:
         with:
           appId: ${{ secrets.HESTIA_FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          # ---------------------------------------------------------------
+          # TESTERS — who receives the build.
+          # Add your partner (or anyone else) later by extending this into a
+          # comma-separated list, with no spaces, then push to main:
+          #   testers: ianrocks62@gmail.com,partner@example.com
+          # (You can also add testers anytime from the Firebase App
+          # Distribution console without changing this file.)
+          # ---------------------------------------------------------------
           testers: ianrocks62@gmail.com
           file: android/app/build/outputs/apk/release/app-release.apk
           releaseNotes: "Hestia — Find anything in your home. | ${{ github.sha }}"
