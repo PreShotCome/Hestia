@@ -12,7 +12,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useInventory } from '../../lib/db';
 import { isRemoteUri, locationLabel } from '../../lib/format';
-import { containerPhotoPath, deletePhoto, uploadPhoto } from '../../lib/storage';
+import { uploadPhoto } from '../../lib/storage';
 import ContainerForm, {
   ContainerFormValues,
 } from '../../components/ContainerForm';
@@ -23,14 +23,8 @@ import { colors, radius, spacing } from '../../lib/theme';
 export default function ContainerDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const {
-    householdId,
-    rooms,
-    containers,
-    items,
-    updateContainer,
-    deleteContainer,
-  } = useInventory();
+  const { rooms, containers, items, updateContainer, deleteContainer } =
+    useInventory();
   const [editing, setEditing] = useState(false);
 
   const container = containers.find((c) => c.id === id);
@@ -54,15 +48,9 @@ export default function ContainerDetailScreen() {
   const saveEdit = async (values: ContainerFormValues) => {
     let photoUrl = container.photoUrl;
     if (values.photo === null) {
-      if (container.photoUrl && householdId) {
-        await deletePhoto(containerPhotoPath(householdId, container.id));
-      }
       photoUrl = null;
-    } else if (!isRemoteUri(values.photo) && householdId) {
-      photoUrl = await uploadPhoto(
-        values.photo,
-        containerPhotoPath(householdId, container.id)
-      );
+    } else if (!isRemoteUri(values.photo)) {
+      photoUrl = await uploadPhoto(values.photo);
     }
     await updateContainer(container.id, {
       name: values.name,

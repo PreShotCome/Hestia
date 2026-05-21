@@ -3,12 +3,11 @@ import { useRouter } from 'expo-router';
 import { useInventory } from '../../lib/db';
 import ItemForm, { ItemFormValues } from '../../components/ItemForm';
 import { isRemoteUri } from '../../lib/format';
-import { itemPhotoPath, uploadPhoto } from '../../lib/storage';
+import { uploadPhoto } from '../../lib/storage';
 
 export default function AddItemScreen() {
   const router = useRouter();
-  const { householdId, rooms, containers, allTags, addItem, updateItem } =
-    useInventory();
+  const { rooms, containers, allTags, addItem, updateItem } = useInventory();
   const [formKey, setFormKey] = useState(0);
 
   const handleSubmit = async (values: ItemFormValues) => {
@@ -21,11 +20,8 @@ export default function AddItemScreen() {
       tags: values.tags,
       photoUrl: null,
     });
-    if (values.photo && !isRemoteUri(values.photo) && householdId) {
-      const url = await uploadPhoto(
-        values.photo,
-        itemPhotoPath(householdId, id)
-      );
+    if (values.photo && !isRemoteUri(values.photo)) {
+      const url = await uploadPhoto(values.photo);
       await updateItem(id, { photoUrl: url });
     }
     setFormKey((k) => k + 1);

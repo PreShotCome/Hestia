@@ -4,8 +4,9 @@ A private apartment inventory app for you and your partner. Catalog your
 belongings by **room → container → item**, attach photos, tag things, and
 search instantly so you can always find what you own.
 
-Built with Expo (React Native) and Firebase. Android-focused, not published to
-any store — you install it on your own phones.
+Built with Expo (React Native), Firebase (auth + database), and Cloudinary
+(photo hosting). Android-focused, not published to any store — you install it
+on your own phones.
 
 ## How it works
 
@@ -23,26 +24,40 @@ any store — you install it on your own phones.
 
 1. Go to <https://console.firebase.google.com> and create a project.
 2. In **Build → Authentication**, enable the **Email/Password** sign-in method.
-3. In **Build → Firestore Database**, create a database (production mode).
-4. In **Build → Storage**, enable Storage.
-5. In **Project settings → General → Your apps**, add a **Web app** and copy the
+3. In **Build → Firestore Database**, click **Create database** (production
+   mode). This is **Cloud Firestore** — *not* the Realtime Database.
+4. In **Project settings → General → Your apps**, add a **Web app** and copy the
    `firebaseConfig` values shown.
 
-### 2. Add your config to the app
+The app does not use Firebase Storage (it now requires a billing account);
+photos go to Cloudinary instead — see step 4 below.
+
+### 2. Add your Firebase config to the app
 
 Open `lib/firebaseConfig.ts` and replace the placeholder values with the ones
 from your Firebase web app. (These values are not secret — access is controlled
 by the security rules below.)
 
-### 3. Deploy the security rules
+### 3. Deploy the Firestore security rules
 
-The repo includes `firestore.rules` and `storage.rules`. Deploy them so only
-household members can read/write your data. Either:
+The repo includes `firestore.rules` so only household members can read/write
+your data. Open **Firestore Database → Rules** in the Firebase console, paste
+the file's contents, and click **Publish**. (Or, with the Firebase CLI:
+`firebase deploy --only firestore:rules`.)
 
-- Paste their contents into the **Rules** tabs of Firestore and Storage in the
-  Firebase console, **or**
-- Use the Firebase CLI: `npm i -g firebase-tools`, then `firebase login` and
-  `firebase deploy --only firestore:rules,storage`.
+### 4. Set up Cloudinary for photos
+
+Photos are hosted on Cloudinary's free tier (no billing required).
+
+1. Create a free account at <https://cloudinary.com>.
+2. On the dashboard, copy your **Cloud name**.
+3. Create an **unsigned** upload preset: **Settings (gear) → Upload → Upload
+   presets → Add upload preset**, set **Signing Mode** to **Unsigned**, save,
+   and copy the preset name.
+4. Open `lib/cloudinaryConfig.ts` and paste in your cloud name and preset name.
+
+Photos are optional — the app works without this, you just can't attach
+pictures until it's configured.
 
 ## Running the app
 
@@ -83,7 +98,7 @@ app/            screens (expo-router file-based routing)
   room/         room detail
   container/    container detail + add
   item/         item detail + add
-lib/            firebase setup, auth, data layer, types, helpers
+lib/            firebase + cloudinary setup, auth, data layer, types, helpers
 components/     reusable UI (forms, cards, photo picker, tags)
-firestore.rules / storage.rules   security rules
+firestore.rules   Firestore security rules
 ```

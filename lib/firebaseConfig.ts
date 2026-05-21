@@ -9,12 +9,12 @@
 // ---------------------------------------------------------------------------
 
 export const firebaseConfig = {
-  apiKey: 'AIzaSyB2Sdlt9a-E3X0fXC-pakSJd0NTrX6c3ww',
-  authDomain: 'hestia-39396.firebaseapp.com',
-  projectId: 'hestia-39396',
-  storageBucket: 'hestia-39396.firebasestorage.app',
-  messagingSenderId: '818540659337',
-  appId: '1:818540659337:web:9419216c317e10ba0ebc58',
+  apiKey: 'AIzaSyAnZ3sLf8k7XERUawLtuN9al6qviaBGfTU',
+  authDomain: 'hestia-fbc49.firebaseapp.com',
+  projectId: 'hestia-fbc49',
+  storageBucket: 'hestia-fbc49.firebasestorage.app',
+  messagingSenderId: '683887454101',
+  appId: '1:683887454101:web:c894335b6b2cf155b6789c',
 };
 
 export const isFirebaseConfigured =

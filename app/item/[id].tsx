@@ -12,22 +12,15 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useInventory } from '../../lib/db';
 import { isRemoteUri, locationLabel } from '../../lib/format';
-import { deletePhoto, itemPhotoPath, uploadPhoto } from '../../lib/storage';
+import { uploadPhoto } from '../../lib/storage';
 import ItemForm, { ItemFormValues } from '../../components/ItemForm';
 import { colors, radius, spacing } from '../../lib/theme';
 
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const {
-    householdId,
-    rooms,
-    containers,
-    items,
-    allTags,
-    updateItem,
-    deleteItem,
-  } = useInventory();
+  const { rooms, containers, items, allTags, updateItem, deleteItem } =
+    useInventory();
   const [editing, setEditing] = useState(false);
 
   const item = items.find((i) => i.id === id);
@@ -44,15 +37,9 @@ export default function ItemDetailScreen() {
   const saveEdit = async (values: ItemFormValues) => {
     let photoUrl = item.photoUrl;
     if (values.photo === null) {
-      if (item.photoUrl && householdId) {
-        await deletePhoto(itemPhotoPath(householdId, item.id));
-      }
       photoUrl = null;
-    } else if (!isRemoteUri(values.photo) && householdId) {
-      photoUrl = await uploadPhoto(
-        values.photo,
-        itemPhotoPath(householdId, item.id)
-      );
+    } else if (!isRemoteUri(values.photo)) {
+      photoUrl = await uploadPhoto(values.photo);
     }
     await updateItem(item.id, {
       name: values.name,
@@ -73,9 +60,6 @@ export default function ItemDetailScreen() {
         text: 'Delete',
         style: 'destructive',
         onPress: async () => {
-          if (item.photoUrl && householdId) {
-            await deletePhoto(itemPhotoPath(householdId, item.id));
-          }
           await deleteItem(item.id);
           router.back();
         },

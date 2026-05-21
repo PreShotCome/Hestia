@@ -4,12 +4,12 @@ import ContainerForm, {
   ContainerFormValues,
 } from '../../components/ContainerForm';
 import { isRemoteUri } from '../../lib/format';
-import { containerPhotoPath, uploadPhoto } from '../../lib/storage';
+import { uploadPhoto } from '../../lib/storage';
 
 export default function NewContainerScreen() {
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
   const router = useRouter();
-  const { householdId, addContainer, updateContainer } = useInventory();
+  const { addContainer, updateContainer } = useInventory();
 
   const handleSubmit = async (values: ContainerFormValues) => {
     if (!roomId) {
@@ -21,11 +21,8 @@ export default function NewContainerScreen() {
       roomId,
       photoUrl: null,
     });
-    if (values.photo && !isRemoteUri(values.photo) && householdId) {
-      const url = await uploadPhoto(
-        values.photo,
-        containerPhotoPath(householdId, id)
-      );
+    if (values.photo && !isRemoteUri(values.photo)) {
+      const url = await uploadPhoto(values.photo);
       await updateContainer(id, { photoUrl: url });
     }
     router.back();
