@@ -14,8 +14,8 @@
 // ---------------------------------------------------------------------------
 
 export const cloudinaryConfig = {
-  cloudName: 'REPLACE_WITH_CLOUD_NAME',
-  uploadPreset: 'REPLACE_WITH_UPLOAD_PRESET',
+  cloudName: 'drok0grxp',
+  uploadPreset: 'hestia',
 };
 
 export const isCloudinaryConfigured =
