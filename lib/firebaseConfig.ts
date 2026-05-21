@@ -9,12 +9,12 @@
 // ---------------------------------------------------------------------------
 
 export const firebaseConfig = {
-  apiKey: 'REPLACE_WITH_YOUR_API_KEY',
-  authDomain: 'REPLACE_WITH_YOUR_PROJECT.firebaseapp.com',
-  projectId: 'REPLACE_WITH_YOUR_PROJECT_ID',
-  storageBucket: 'REPLACE_WITH_YOUR_PROJECT.appspot.com',
-  messagingSenderId: 'REPLACE_WITH_YOUR_SENDER_ID',
-  appId: 'REPLACE_WITH_YOUR_APP_ID',
+  apiKey: 'AIzaSyB2Sdlt9a-E3X0fXC-pakSJd0NTrX6c3ww',
+  authDomain: 'hestia-39396.firebaseapp.com',
+  projectId: 'hestia-39396',
+  storageBucket: 'hestia-39396.firebasestorage.app',
+  messagingSenderId: '818540659337',
+  appId: '1:818540659337:web:9419216c317e10ba0ebc58',
 };
 
 export const isFirebaseConfigured =
