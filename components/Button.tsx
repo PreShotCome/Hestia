@@ -6,7 +6,7 @@ import {
   Text,
   ViewStyle,
 } from 'react-native';
-import { colors, radius, spacing } from '../lib/theme';
+import { colors, radius, shadows, spacing } from '../lib/theme';
 
 type Variant = 'primary' | 'secondary' | 'danger';
 
@@ -69,14 +69,16 @@ const styles = StyleSheet.create({
   },
   primary: {
     backgroundColor: colors.primary,
+    ...shadows.card,
   },
   secondary: {
     backgroundColor: colors.surface,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.primary,
   },
   danger: {
     backgroundColor: colors.danger,
+    ...shadows.card,
   },
   dimmed: {
     opacity: 0.6,

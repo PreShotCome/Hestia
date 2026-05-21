@@ -9,10 +9,11 @@ import {
   View,
 } from 'react-native';
 import { Link } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../lib/auth';
 import Button from '../../components/Button';
-import { colors, radius, spacing } from '../../lib/theme';
+import { colors, radius, shadows, spacing } from '../../lib/theme';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -45,6 +46,9 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.content}>
+          <View style={styles.logoBadge}>
+            <Ionicons name="flame" size={46} color={colors.surface} />
+          </View>
           <Text style={styles.brand}>Hestia</Text>
           <Text style={styles.tagline}>Find anything in your home.</Text>
 
@@ -94,10 +98,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: spacing.xl,
   },
+  logoBadge: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: spacing.lg,
+    ...shadows.floating,
+  },
   brand: {
     fontSize: 40,
     fontWeight: '800',
-    color: colors.primary,
+    color: colors.text,
     textAlign: 'center',
   },
   tagline: {

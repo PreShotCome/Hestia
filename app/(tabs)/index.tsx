@@ -13,7 +13,7 @@ import { useInventory } from '../../lib/db';
 import { locationLabel } from '../../lib/format';
 import ItemCard from '../../components/ItemCard';
 import EmptyState from '../../components/EmptyState';
-import { colors, radius, spacing } from '../../lib/theme';
+import { colors, radius, shadows, spacing } from '../../lib/theme';
 
 type SortKey = 'name' | 'updated' | 'tag';
 
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     marginHorizontal: spacing.lg,
     marginTop: spacing.md,
+    ...shadows.card,
   },
   searchInput: {
     flex: 1,

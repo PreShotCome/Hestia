@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { Item } from '../lib/types';
-import { colors, radius, spacing } from '../lib/theme';
+import { colors, radius, shadows, spacing } from '../lib/theme';
 
 interface Props {
   item: Item;
@@ -62,10 +62,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.md,
+    ...shadows.card,
   },
   pressed: {
     opacity: 0.7,
@@ -99,9 +100,14 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   quantity: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primaryDark,
+    backgroundColor: colors.chip,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    overflow: 'hidden',
   },
   location: {
     fontSize: 13,

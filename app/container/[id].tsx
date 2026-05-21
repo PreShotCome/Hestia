@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   photo: {
     width: '100%',
     height: 200,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
   },
   name: {

@@ -9,11 +9,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../lib/auth';
 import { createHousehold, joinHousehold } from '../../lib/db';
 import Button from '../../components/Button';
-import { colors, radius, spacing } from '../../lib/theme';
+import { colors, radius, shadows, spacing } from '../../lib/theme';
 
 type Mode = 'create' | 'join';
 
@@ -58,6 +59,9 @@ export default function HouseholdScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={styles.content}>
+          <View style={styles.logoBadge}>
+            <Ionicons name="home" size={32} color={colors.surface} />
+          </View>
           <Text style={styles.title}>Set up your home</Text>
           <Text style={styles.subtitle}>
             Create a new household, or join your partner's with their invite
@@ -141,6 +145,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: spacing.xl,
+  },
+  logoBadge: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: spacing.lg,
+    ...shadows.floating,
   },
   title: {
     fontSize: 26,

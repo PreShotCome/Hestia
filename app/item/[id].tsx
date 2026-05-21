@@ -14,7 +14,7 @@ import { useInventory } from '../../lib/db';
 import { isRemoteUri, locationLabel } from '../../lib/format';
 import { uploadPhoto } from '../../lib/storage';
 import ItemForm, { ItemFormValues } from '../../components/ItemForm';
-import { colors, radius, spacing } from '../../lib/theme';
+import { colors, radius, shadows, spacing } from '../../lib/theme';
 
 export default function ItemDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   photo: {
     width: '100%',
     height: 240,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     backgroundColor: colors.surface,
   },
   photoPlaceholder: {
@@ -223,9 +223,14 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   quantity: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.primary,
+    fontSize: 15,
+    fontWeight: '800',
+    color: colors.text,
+    backgroundColor: colors.gold,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    overflow: 'hidden',
   },
   locationCard: {
     flexDirection: 'row',
@@ -234,9 +239,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     padding: spacing.md,
     marginTop: spacing.sm,
+    ...shadows.card,
   },
   locationText: {
     fontSize: 15,

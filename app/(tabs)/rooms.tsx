@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useInventory } from '../../lib/db';
 import EmptyState from '../../components/EmptyState';
 import Button from '../../components/Button';
-import { colors, radius, spacing } from '../../lib/theme';
+import { colors, radius, shadows, spacing } from '../../lib/theme';
 
 const ROOM_ICONS = [
   '🛋️',
@@ -187,10 +187,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.lg,
+    ...shadows.card,
   },
   pressed: {
     opacity: 0.7,
@@ -215,13 +216,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: spacing.lg,
     bottom: spacing.xl,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 4,
+    ...shadows.floating,
   },
   modalOverlay: {
     flex: 1,

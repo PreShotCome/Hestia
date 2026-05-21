@@ -7,13 +7,15 @@
     "scheme": "hestia",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "icon": "./assets/icon.png",
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
       "package": "com.Hestia.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E8743B"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#9E2E26"
       }
     },
     "plugins": [
@@ -23,6 +25,15 @@
         {
           "cameraPermission": "Hestia uses the camera to photograph your items and containers.",
           "photosPermission": "Hestia uses your photo library to attach pictures to items."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 220,
+          "resizeMode": "contain",
+          "backgroundColor": "#D4582B"
         }
       ],
       "expo-asset",

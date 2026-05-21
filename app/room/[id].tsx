@@ -12,7 +12,7 @@ import { useInventory } from '../../lib/db';
 import { locationLabel } from '../../lib/format';
 import ItemCard from '../../components/ItemCard';
 import Button from '../../components/Button';
-import { colors, radius, spacing } from '../../lib/theme';
+import { colors, radius, shadows, spacing } from '../../lib/theme';
 
 export default function RoomDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -190,10 +190,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.md,
+    ...shadows.card,
   },
   pressed: {
     opacity: 0.7,

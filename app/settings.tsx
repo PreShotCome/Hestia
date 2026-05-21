@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../lib/auth';
 import { useInventory } from '../lib/db';
 import Button from '../components/Button';
-import { colors, radius, spacing } from '../lib/theme';
+import { colors, radius, shadows, spacing } from '../lib/theme';
 
 export default function SettingsScreen() {
   const { user, userDoc, signOut } = useAuth();
@@ -58,11 +58,12 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: radius.lg,
     borderWidth: 1,
     borderColor: colors.border,
     padding: spacing.lg,
     gap: spacing.xs,
+    ...shadows.card,
   },
   cardLabel: {
     fontSize: 13,

@@ -11,7 +11,7 @@ interface Props {
 export default function EmptyState({ icon, title, subtitle }: Props) {
   return (
     <View style={styles.container}>
-      <Ionicons name={icon} size={56} color={colors.border} />
+      <Ionicons name={icon} size={64} color={colors.gold} />
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
     </View>
