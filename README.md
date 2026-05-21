@@ -88,7 +88,7 @@ One-time setup:
 
 1. In the Firebase console, open **Build → App Distribution** → *Get started*.
 2. In **Project settings → Your apps**, add an **Android app** with package
-   name `com.hestia.app`. Copy its **App ID** (looks like
+   name `com.Hestia.app`. Copy its **App ID** (looks like
    `1:NNN:android:XXXX`). You can skip the `google-services.json` download —
    the app uses the Firebase JS SDK and doesn't need it.
 3. In **Project settings → Service accounts**, click **Generate new private
