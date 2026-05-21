@@ -6,13 +6,14 @@ import {
   LayoutChangeEvent,
   Modal,
   PanResponder,
+  PanResponderInstance,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { colors, radius, spacing } from '../lib/theme';
+import { colors, spacing } from '../lib/theme';
 import Button from './Button';
 
 interface Rect {
@@ -33,6 +34,10 @@ type Corner = 'tl' | 'tr' | 'bl' | 'br';
 const MIN_SIZE = 64;
 const MARGIN = 30;
 
+function clamp(value: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(value, hi));
+}
+
 /** Rendered rect of the image, fit (with margin) inside the crop area. */
 function fitRect(
   img: { w: number; h: number },
@@ -52,7 +57,16 @@ export default function CropModal({ uri, onDone, onCancel }: Props) {
   const [box, setBox] = useState<{ w: number; h: number } | null>(null);
   const [crop, setCrop] = useState<Rect | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Refs mirror the latest values so the (stable) gesture handlers can read
+  // current state without being recreated on every render.
+  const cropRef = useRef<Rect | null>(null);
+  const dispRef = useRef<Rect | null>(null);
   const startRef = useRef<Rect | null>(null);
+
+  const disp = imgSize && box ? fitRect(imgSize, box) : null;
+  cropRef.current = crop;
+  dispRef.current = disp;
 
   useEffect(() => {
     setImgSize(null);
@@ -68,59 +82,89 @@ export default function CropModal({ uri, onDone, onCancel }: Props) {
     );
   }, [uri]);
 
-  const disp = imgSize && box ? fitRect(imgSize, box) : null;
-
   useEffect(() => {
     if (imgSize && box && !crop) {
-      setCrop(fitRect(imgSize, box));
+      const d = fitRect(imgSize, box);
+      setCrop({
+        x: d.x + d.w * 0.1,
+        y: d.y + d.h * 0.1,
+        w: d.w * 0.8,
+        h: d.h * 0.8,
+      });
     }
   }, [imgSize, box, crop]);
+
+  // Build the pan responders exactly once.
+  const respondersRef = useRef<{
+    move: PanResponderInstance;
+    tl: PanResponderInstance;
+    tr: PanResponderInstance;
+    bl: PanResponderInstance;
+    br: PanResponderInstance;
+  } | undefined>(undefined);
+  if (!respondersRef.current) {
+    const move = PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderTerminationRequest: () => false,
+      onPanResponderGrant: () => {
+        startRef.current = cropRef.current;
+      },
+      onPanResponderMove: (_, g) => {
+        const s = startRef.current;
+        const d = dispRef.current;
+        if (!s || !d) return;
+        setCrop({
+          x: clamp(s.x + g.dx, d.x, d.x + d.w - s.w),
+          y: clamp(s.y + g.dy, d.y, d.y + d.h - s.h),
+          w: s.w,
+          h: s.h,
+        });
+      },
+    });
+
+    const corner = (c: Corner) =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderTerminationRequest: () => false,
+        onPanResponderGrant: () => {
+          startRef.current = cropRef.current;
+        },
+        onPanResponderMove: (_, g) => {
+          const s = startRef.current;
+          const d = dispRef.current;
+          if (!s || !d) return;
+          let left = s.x;
+          let right = s.x + s.w;
+          let top = s.y;
+          let bottom = s.y + s.h;
+          if (c === 'tl' || c === 'bl') left = s.x + g.dx;
+          if (c === 'tr' || c === 'br') right = s.x + s.w + g.dx;
+          if (c === 'tl' || c === 'tr') top = s.y + g.dy;
+          if (c === 'bl' || c === 'br') bottom = s.y + s.h + g.dy;
+          left = clamp(left, d.x, right - MIN_SIZE);
+          right = clamp(right, left + MIN_SIZE, d.x + d.w);
+          top = clamp(top, d.y, bottom - MIN_SIZE);
+          bottom = clamp(bottom, top + MIN_SIZE, d.y + d.h);
+          setCrop({ x: left, y: top, w: right - left, h: bottom - top });
+        },
+      });
+
+    respondersRef.current = {
+      move,
+      tl: corner('tl'),
+      tr: corner('tr'),
+      bl: corner('bl'),
+      br: corner('br'),
+    };
+  }
+  const responders = respondersRef.current;
 
   const onAreaLayout = (e: LayoutChangeEvent) => {
     const { width, height } = e.nativeEvent.layout;
     setBox({ w: width, h: height });
   };
-
-  const moveResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: () => {
-      startRef.current = crop;
-    },
-    onPanResponderMove: (_, g) => {
-      const s = startRef.current;
-      if (!s || !disp) return;
-      const x = Math.max(disp.x, Math.min(s.x + g.dx, disp.x + disp.w - s.w));
-      const y = Math.max(disp.y, Math.min(s.y + g.dy, disp.y + disp.h - s.h));
-      setCrop({ x, y, w: s.w, h: s.h });
-    },
-  });
-
-  const cornerResponder = (corner: Corner) =>
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        startRef.current = crop;
-      },
-      onPanResponderMove: (_, g) => {
-        const s = startRef.current;
-        if (!s || !disp) return;
-        let left = s.x;
-        let right = s.x + s.w;
-        let top = s.y;
-        let bottom = s.y + s.h;
-        if (corner === 'tl' || corner === 'bl') left = s.x + g.dx;
-        if (corner === 'tr' || corner === 'br') right = s.x + s.w + g.dx;
-        if (corner === 'tl' || corner === 'tr') top = s.y + g.dy;
-        if (corner === 'bl' || corner === 'br') bottom = s.y + s.h + g.dy;
-        left = Math.max(disp.x, Math.min(left, right - MIN_SIZE));
-        right = Math.min(disp.x + disp.w, Math.max(right, left + MIN_SIZE));
-        top = Math.max(disp.y, Math.min(top, bottom - MIN_SIZE));
-        bottom = Math.min(disp.y + disp.h, Math.max(bottom, top + MIN_SIZE));
-        setCrop({ x: left, y: top, w: right - left, h: bottom - top });
-      },
-    });
 
   const confirm = async () => {
     if (!uri || !crop || !disp || !imgSize) return;
@@ -160,7 +204,7 @@ export default function CropModal({ uri, onDone, onCancel }: Props) {
     >
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
         <Text style={styles.title}>Crop photo</Text>
-        <Text style={styles.hint}>Drag the frame and corners to crop.</Text>
+        <Text style={styles.hint}>Drag the frame to move it, corners to resize.</Text>
 
         <View style={styles.area} onLayout={onAreaLayout}>
           {uri && disp ? (
@@ -208,7 +252,7 @@ export default function CropModal({ uri, onDone, onCancel }: Props) {
               />
 
               <View
-                {...moveResponder.panHandlers}
+                {...responders.move.panHandlers}
                 style={[
                   styles.cropBox,
                   { left: crop.x, top: crop.y, width: crop.w, height: crop.h },
@@ -221,7 +265,7 @@ export default function CropModal({ uri, onDone, onCancel }: Props) {
                 return (
                   <View
                     key={c}
-                    {...cornerResponder(c).panHandlers}
+                    {...responders[c].panHandlers}
                     style={[styles.handle, { left: hx - 22, top: hy - 22 }]}
                   >
                     <View style={styles.handleDot} />
