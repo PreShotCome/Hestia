@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Hestia",
+    "slug": "hestia",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "hestia",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.hestia.inventory",
+      "adaptiveIcon": {
+        "backgroundColor": "#E8743B"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Hestia uses the camera to photograph your items and containers.",
+          "photosPermission": "Hestia uses your photo library to attach pictures to items."
+        }
+      ],
+      "expo-asset",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
