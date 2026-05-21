@@ -11,7 +11,7 @@
       "**/*"
     ],
     "android": {
-      "package": "com.hestia.inventory",
+      "package": "com.hestia.app",
       "adaptiveIcon": {
         "backgroundColor": "#E8743B"
       }

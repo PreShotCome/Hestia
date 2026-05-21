@@ -77,17 +77,29 @@ code shown in the terminal.
 3. Your partner installs the app, signs up with their own account, chooses
    **Join**, and enters that invite code. You now share one inventory.
 
-## Building an installable APK
+## Installing on phones (Firebase App Distribution)
 
-Expo Go is fine for everyday use, but for a permanent install:
+Expo Go is for development. For a permanent install, the GitHub Actions
+workflow in `.github/workflows/build.yml` builds a release APK on every push
+to `main` (or via "Run workflow") and uploads it to **Firebase App
+Distribution**, which notifies testers so they can install it.
 
-```bash
-npm i -g eas-cli
-eas login
-eas build -p android --profile preview
-```
+One-time setup:
 
-This produces an `.apk` you can download and sideload onto both phones.
+1. In the Firebase console, open **Build → App Distribution** → *Get started*.
+2. In **Project settings → Your apps**, add an **Android app** with package
+   name `com.hestia.app`. Copy its **App ID** (looks like
+   `1:NNN:android:XXXX`). You can skip the `google-services.json` download —
+   the app uses the Firebase JS SDK and doesn't need it.
+3. In **Project settings → Service accounts**, click **Generate new private
+   key** to download a service-account JSON file.
+4. In the GitHub repo: **Settings → Secrets and variables → Actions**, add:
+   - `HESTIA_FIREBASE_APP_ID` — the Android App ID from step 2
+   - `FIREBASE_SERVICE_ACCOUNT` — the full contents of the JSON from step 3
+5. Add tester emails (yours and your partner's) under App Distribution; the
+   workflow already lists the first tester in `build.yml`.
+
+Each push to `main` then builds and delivers a new release to both phones.
 
 ## Project layout
 
