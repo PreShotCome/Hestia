@@ -9,22 +9,22 @@ import { uploadPhoto } from '../../lib/storage';
 export default function NewContainerScreen() {
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
   const router = useRouter();
-  const { addContainer, updateContainer } = useInventory();
+  const { addContainer } = useInventory();
 
   const handleSubmit = async (values: ContainerFormValues) => {
     if (!roomId) {
       throw new Error('Missing room.');
     }
-    const id = await addContainer({
+    let photoUrl: string | null = null;
+    if (values.photo && !isRemoteUri(values.photo)) {
+      photoUrl = await uploadPhoto(values.photo);
+    }
+    await addContainer({
       name: values.name,
       type: values.type,
       roomId,
-      photoUrl: null,
+      photoUrl,
     });
-    if (values.photo && !isRemoteUri(values.photo)) {
-      const url = await uploadPhoto(values.photo);
-      await updateContainer(id, { photoUrl: url });
-    }
     router.back();
   };
 

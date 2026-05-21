@@ -32,14 +32,23 @@ export async function uploadPhoto(localUri: string): Promise<string> {
   formData.append('upload_preset', cloudinaryConfig.uploadPreset);
 
   const endpoint = `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`;
-  const response = await fetch(endpoint, { method: 'POST', body: formData });
-  if (!response.ok) {
-    throw new Error('Photo upload failed. Please try again.');
+
+  let response: Response;
+  try {
+    response = await fetch(endpoint, { method: 'POST', body: formData });
+  } catch {
+    throw new Error(
+      'Could not reach the photo server. Check your connection and try again.'
+    );
   }
 
-  const data = (await response.json()) as { secure_url?: string };
-  if (!data.secure_url) {
-    throw new Error('Photo upload failed. Please try again.');
+  const data = (await response.json().catch(() => null)) as
+    | { secure_url?: string; error?: { message?: string } }
+    | null;
+
+  if (!response.ok || !data?.secure_url) {
+    const reason = data?.error?.message ?? `HTTP ${response.status}`;
+    throw new Error(`Photo upload failed: ${reason}`);
   }
   return data.secure_url;
 }

@@ -10,22 +10,22 @@ export default function NewItemScreen() {
     containerId?: string;
   }>();
   const router = useRouter();
-  const { rooms, containers, allTags, addItem, updateItem } = useInventory();
+  const { rooms, containers, allTags, addItem } = useInventory();
 
   const handleSubmit = async (values: ItemFormValues) => {
-    const id = await addItem({
+    let photoUrl: string | null = null;
+    if (values.photo && !isRemoteUri(values.photo)) {
+      photoUrl = await uploadPhoto(values.photo);
+    }
+    await addItem({
       name: values.name,
       notes: values.notes,
       quantity: values.quantity,
       roomId: values.roomId,
       containerId: values.containerId,
       tags: values.tags,
-      photoUrl: null,
+      photoUrl,
     });
-    if (values.photo && !isRemoteUri(values.photo)) {
-      const url = await uploadPhoto(values.photo);
-      await updateItem(id, { photoUrl: url });
-    }
     router.back();
   };
 
